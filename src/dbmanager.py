@@ -6,7 +6,7 @@ from src.constants import EMPLOYER_IDS
 
 
 class DBmanager:
-
+    """Класс для работы с БД PostgreSQL"""
     def __init__(self, config, api, dbname='hh_info'):
         self.config = config
         self.dbname = dbname
@@ -14,22 +14,23 @@ class DBmanager:
         self.api = api
         self.temp_result = []
 
-    def get_connection(self):
-        self.conn = psycopg2.connect(**self.config)
-
     def close_connection(self):
+        """метод закрытия подключения к БД"""
         if self.conn:
             self.conn.close()
 
     def get_employers(self):
+        """метод получения списка работодателей"""
         employers = self.api.employer_parser(EMPLOYER_IDS)
         return [Employer(**employer) for employer in employers]
 
     def get_vacancies(self, url):
+        """метод получения списка вакансий"""
         vacancies = self.api.vacancies_parser(url)
         return [Vacancies(**vacancy) for vacancy in vacancies]
 
     def create_db(self):
+        """метод создания и подключения к БД"""
         connection = psycopg2.connect(**self.config)
         connection.autocommit = True
         with connection.cursor() as cursor:
@@ -39,6 +40,7 @@ class DBmanager:
         self.close_connection()
 
     def create_tables(self):
+        """метод создания таблиц"""
         self.config['dbname'] = self.dbname
         self.conn = psycopg2.connect(**self.config)
         with self.conn.cursor() as cur:
@@ -67,6 +69,7 @@ class DBmanager:
         self.close_connection()
 
     def insert_values(self, value, key):
+        """метод внесения данных в таблицы"""
         try:
             self.conn = psycopg2.connect(**self.config)  # !!!!
             if key == 'employers':
@@ -108,6 +111,7 @@ class DBmanager:
             self.close_connection()
 
     def get_example(self, *args, **kwargs):
+        """вспомогательный метод для работы с запросами"""
         self.conn = psycopg2.connect(**self.config)
         with self.conn.cursor() as cur:
             cur.execute(*args, **kwargs)

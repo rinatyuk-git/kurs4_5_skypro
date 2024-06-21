@@ -2,6 +2,7 @@ from src.dbmanager import dbmanager
 
 
 def print_result(result, msg):
+    """метод для вывода/показа результатов запросов"""
     print(msg)
     for line in result:
         print(line)
@@ -9,7 +10,7 @@ def print_result(result, msg):
 
 
 def flow():
-
+    """запуск методов и запросов"""
     dbmanager.create_db()
     dbmanager.create_tables()
     employers = dbmanager.get_employers()
@@ -20,6 +21,7 @@ def flow():
             vacancy.employer_id = employer_id
             dbmanager.insert_values(vacancy, 'vacancies')
 
+    """вывод результатов"""
     msg = 'список всех компаний и количество вакансий у каждой компании ↓'
     print_result(dbmanager.get_companies_and_vacancies_count(), msg)
     msg = 'список всех вакансий с указанием названия компании, названия вакансии и зарплаты и ссылки на вакансию ↓'
